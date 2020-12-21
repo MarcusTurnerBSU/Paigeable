@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class playerMovement : MonoBehaviour
 {
+    public levelManager levelManager;
+
+   
     public Transform home;
-    
+    private Vector3 startingPosition;
 
 
 
@@ -14,7 +17,18 @@ public class playerMovement : MonoBehaviour
 
     private void Awake()
     {
-        
+        startingPosition = transform.position;
+        levelManager.onReset.AddListener(resetPosition);
+
+    }
+    private void OnDestroy()
+    {
+        levelManager.onReset.RemoveAllListeners();
+    }
+
+    private void resetPosition()
+    {
+        transform.position = startingPosition;
     }
 
 
@@ -40,20 +54,22 @@ public class playerMovement : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.A))
             {
-                transform.position += Vector3.left;
+                if (levelManager.movementCheck(-1))
+                {
+                    transform.position += Vector3.left;
+                }
             }
             if (Input.GetKeyDown(KeyCode.D))
             {
-                transform.position += Vector3.right;
+                if (levelManager.movementCheck(1))
+                {
+                    transform.position += Vector3.right;
+                }
             }
         }
         //if avatar x and y is equal to home x and y {
         //stop movement/ show animation }
         //else { allow movement
-        
-    }
-    private void OnDestroy()
-    {
         
     }
 
