@@ -15,33 +15,43 @@ public class levelManager : MonoBehaviour
     int homeCountMax;
     //how many homes have been reached
     int homeCountCurrent;
-    int playerCurrentPosX;
-    int playerCurrentPosY;
+
+    public bool allowInput = false;
 
     private void onClickReset()
     {
         homeCountCurrent = 0;
-        playerCurrentPosX = 10;
-        playerCurrentPosY = 1;
         levelCompleteDisplay.SetActive(false);
         if(onReset != null)
             onReset.Invoke();
     }
-    public bool movementCheck(int direction)
+    public bool movementCheck(int currentX, int currentY, int direction)
     {
-        int tempPosY = playerCurrentPosY;
+        
+        int tempPosY = currentY;
         tempPosY += direction;
-        char tempChar = map[playerCurrentPosX, tempPosY];
+        char tempChar = map[currentX, tempPosY];
         switch (tempChar)
         {
             case 'W':
+                Debug.Log("Wall?");
                 return false;
             case 'H':
                 homeCountCurrent++;
                 levelCompleteCheck();
                 break;
         }
-        playerCurrentPosY += direction;
+        
+        return true;
+    }
+
+    public bool groundCheck(int currentX, int currentY)
+    {
+        char tempChar = map[currentX + 1, currentY];
+        if (tempChar == 'W')
+        {
+            return false;
+        }
         return true;
     }
     private void levelCompleteCheck()
@@ -67,16 +77,13 @@ public class levelManager : MonoBehaviour
             {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
             {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
             {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
-            {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
-            {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
+            {'W', '/', '/', '/', '/', '/', '/', '/', '/', '/', '/', '/', 'W'},
+            {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', '/', '/', 'W', 'W', 'W'},
             {'W', 'A', '/', '/', '/', '/', '/', '/', '/', '/', '/', 'H', 'W'},
             {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
         };
         homeCountMax = 1;
         homeCountCurrent = 0;
-        playerCurrentPosX = 10;
-        playerCurrentPosY = 1;
-
 
     }
     // Start is called before the first frame update
