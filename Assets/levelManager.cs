@@ -16,8 +16,6 @@ public class levelManager : MonoBehaviour
     //how many homes have been reached
     int homeCountCurrent;
 
-    public bool allowInput = false;
-
     private void onClickReset()
     {
         homeCountCurrent = 0;
