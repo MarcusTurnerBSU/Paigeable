@@ -6,15 +6,17 @@ using UnityEngine.Events;
 
 public class levelManager : MonoBehaviour
 {
+    public playerManager playerManager;
+    public elevatorMovement elevatorMovement;
     public UnityEvent onReset;
     public GameObject levelCompleteDisplay;
     public Button resetButton;
     //empty 2d array to setup grid for level
     char[,] map;
     //how many homes reachable
-    int homeCountMax;
+    public int homeCountMax;
     //how many homes have been reached
-    int homeCountCurrent;
+    int homeCountCurrent;    
 
     private void onClickReset()
     {
@@ -22,6 +24,9 @@ public class levelManager : MonoBehaviour
         levelCompleteDisplay.SetActive(false);
         if(onReset != null)
             onReset.Invoke();
+        playerManager.Reset();
+        elevatorMovement.Reset();
+        generateMap();
     }
     public bool movementCheck(int currentX, int currentY, int direction)
     {
@@ -32,15 +37,25 @@ public class levelManager : MonoBehaviour
         switch (tempChar)
         {
             case 'W':
-                Debug.Log("Wall?");
+                //Debug.Log("Wall");
                 return false;
-            case 'H':
-                homeCountCurrent++;
-                levelCompleteCheck();
-                break;
         }
         
         return true;
+    }
+
+    public bool homeCheck(int currentX, int currentY, char homeID)
+    {
+        char tempChar = map[currentX, currentY];
+        if (tempChar == homeID)
+        {
+            //Debug.Log("Home: X: " + currentX + ", Y: " + currentY);
+            homeCountCurrent++;
+            levelCompleteCheck();
+            return true;
+        }
+
+        return false;
     }
 
     public bool groundCheck(int currentX, int currentY)
@@ -48,6 +63,12 @@ public class levelManager : MonoBehaviour
         char tempChar = map[currentX + 1, currentY];
         if (tempChar == 'W')
         {
+            //Debug.Log("Ground: X: " + currentX + ", Y: " + currentY);
+            return false;
+        }
+        if (tempChar == 'E')
+        {
+            //Debug.Log("Elevator Platform: X: " + currentX + ", Y: " + currentY);
             return false;
         }
         return true;
@@ -63,6 +84,25 @@ public class levelManager : MonoBehaviour
     {
         levelCompleteDisplay.SetActive(false);
         resetButton.onClick.AddListener(onClickReset);
+        generateMap();
+        homeCountCurrent = 0;
+
+    }
+    
+    public void onElevatorToggle(int x, int y, bool isUp)
+    {
+        if (isUp)
+        {
+            map[x, y] = '/';
+        }
+        else
+        {
+            map[x, y] = 'E';
+        }
+    }
+
+    public void generateMap()
+    {
         map = new char[,]
         {
             //visual look of grid positions for map
@@ -75,24 +115,10 @@ public class levelManager : MonoBehaviour
             {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
             {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
             {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
-            {'W', '/', '/', '/', '/', '/', '/', '/', '/', '/', '/', '/', 'W'},
+            {'W', '/', '/', '/', '/', '/', '/', '/', '/', '/', '/', '1', 'W'},
             {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', '/', '/', 'W', 'W', 'W'},
-            {'W', 'A', '/', '/', '/', '/', '/', '/', '/', '/', '/', 'H', 'W'},
+            {'W', '/', '/', '/', '/', '/', '/', '/', '/', '/', '/', '2', 'W'},
             {'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'},
         };
-        homeCountMax = 1;
-        homeCountCurrent = 0;
-
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

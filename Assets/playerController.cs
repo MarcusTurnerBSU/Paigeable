@@ -8,54 +8,49 @@ public class playerController : MonoBehaviour
     public levelManager levelManager;
     public playerManager playerManager;
 
-   
-    public Transform home;
+  
     private Vector3 startingPosition;
 
     public int currentX, currentY;
-
-
-
+    public bool isHome;
+    public char homeID;
+    private int startingX, startingY;
 
     private void Awake()
     {
         startingPosition = transform.position;
-        levelManager.onReset.AddListener(resetPosition);
-
+        startingX = currentX;
+        startingY = currentY;
     }
     private void OnDestroy()
     {
-        levelManager.onReset.RemoveAllListeners();
+     
     }
-
-    private void resetPosition()
-    {
-        transform.position = startingPosition;
-    }
-
-
-
-
-
-
-
     // Start is called before the first frame update
     void Start()
     {
       
     }
-    
+    public void Reset()
+    {
+        transform.position = startingPosition;
+        currentX = startingX;
+        currentY = startingY;
+        isHome = false;
+    }
+
+
     //using coroutine to show cube falling
     private IEnumerator falling()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.1f);
         while (levelManager.groundCheck(currentX, currentY))
         {
             currentX++;
             transform.position += Vector3.down;
             //show update every loop of the while
             yield return null;
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.1f);
         }
         movementComplete();
         yield return null;
@@ -63,24 +58,44 @@ public class playerController : MonoBehaviour
 
     public void moveRight()
     {
-        Debug.Log("D pressed: " + this.name);
+        //if this player is home, block movement
+        if (isHome)
+        {
+            movementComplete();
+            //Debug.Log(this.name + "! isHome: X: " + currentX + ", Y: " + currentY);
+            return;
+        }
+        
+        //checking if player can move from current position to direction right
         if (levelManager.movementCheck(currentX, currentY, 1))
         {
+            //updating current position 
             currentY++;
+            //updating the objects visuals on the screen
             transform.position += Vector3.right;
-            Debug.Log("D pressed: ");
+            //storing if player's new current position is equal to home or not
+            isHome = levelManager.homeCheck(currentX, currentY, homeID);
+            //Debug.Log(this.name + "! moveCheck: X: " + currentX + ", Y: " + currentY + ", isHome: " + isHome.ToString());
         }
+        //call coroutine to check/start falling
         StartCoroutine(falling());
     }
 
     public void moveLeft()
     {
-        Debug.Log("A pressed: " + this.name);
+        if (isHome)
+        {
+            //Debug.Log(this.name + "! isHome: X: " + currentX + ", Y: " + currentY);
+            movementComplete();
+            return;
+        }
+
         if (levelManager.movementCheck(currentX, currentY, -1))
         {
             currentY--;
             transform.position += Vector3.left;
-            Debug.Log("A pressed: ");
+            isHome = levelManager.homeCheck(currentX, currentY, homeID);
+            //Debug.Log(this.name + "! moveCheck: X: " + currentX + ", Y: " + currentY + ", isHome: " + isHome.ToString());
         }
         StartCoroutine(falling());
     }
@@ -101,4 +116,6 @@ public class playerController : MonoBehaviour
         transform.position -= Vector3.up * 2;
         currentX += 2;
     }
+
+    
 }

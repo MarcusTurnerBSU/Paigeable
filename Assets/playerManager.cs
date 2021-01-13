@@ -6,7 +6,7 @@ public class playerManager : MonoBehaviour
 {
     public playerController[] playerControllers;
 
-    private bool allowInput = false;
+    public bool allowInput = false;
     private int playersMoved;
     // Start is called before the first frame update
     void Start()
@@ -19,6 +19,8 @@ public class playerManager : MonoBehaviour
     {
         if (!allowInput)
             return;
+            
+           
 
         if (Input.GetKeyDown(KeyCode.A))
         {
@@ -27,7 +29,6 @@ public class playerManager : MonoBehaviour
             {
                 playerControllers[i].moveLeft();
             }
-            Debug.Log("A pressed: " + this.name);
 
         }
         if (Input.GetKeyDown(KeyCode.D))
@@ -37,7 +38,6 @@ public class playerManager : MonoBehaviour
             {
                 playerControllers[i].moveRight();
             }
-            Debug.Log("D pressed: " + this.name);
 
         }
         //if avatar x and y is equal to home x and y {
@@ -79,6 +79,17 @@ public class playerManager : MonoBehaviour
                     playerControllers[i].moveUp();
                 }
             }
+        }
+    }
+
+    public void Reset()
+    {
+        allowInput = true;
+        playersMoved = 0;
+
+        for (int i = 0; i < playerControllers.Length; i++)
+        {
+            playerControllers[i].Reset();
         }
     }
 }
