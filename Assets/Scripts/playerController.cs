@@ -7,7 +7,6 @@ public class playerController : MonoBehaviour
     //referencing gameobject components
     public levelManager levelManager;
     public playerManager playerManager;
-
   
     private Vector3 startingPosition;
 
@@ -16,21 +15,15 @@ public class playerController : MonoBehaviour
     public char homeID;
     private int startingX, startingY;
 
+    //awake is being called when the script is being loaded
     private void Awake()
     {
         startingPosition = transform.position;
         startingX = currentX;
         startingY = currentY;
     }
-    private void OnDestroy()
-    {
-     
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-      
-    }
+
+    //reset method is resetting the avatar's position
     public void Reset()
     {
         transform.position = startingPosition;
@@ -100,11 +93,13 @@ public class playerController : MonoBehaviour
         StartCoroutine(falling());
     }
 
+    //telling playerManager avatar has completed it's move
     private void movementComplete()
     {
         playerManager.onControllerMovementComplete();
     }
 
+    //elevator platform moves up
     public void moveUp()
     {
         transform.position += Vector3.up * 2;

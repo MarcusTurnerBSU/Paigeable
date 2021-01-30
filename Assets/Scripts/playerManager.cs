@@ -16,17 +16,21 @@ public class playerManager : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {   
+        //if true get out of the update method
         if (!allowInput)
             return;
             
            
-
+        // if 'A' is pressed
         if (Input.GetKeyDown(KeyCode.A))
         {
+            //disabled input to allow all avatars to move
             allowInput = false;
+            //for loop running through each avatar
             for (int i = 0; i < playerControllers.Length; i++)
             {
+                //all avatars move left
                 playerControllers[i].moveLeft();
             }
 
@@ -40,12 +44,9 @@ public class playerManager : MonoBehaviour
             }
 
         }
-        //if avatar x and y is equal to home x and y {
-        //stop movement/ show animation }
-        //else { allow movement
-
     }
 
+    //check to see if all movement are complete, if so increment 'playersMoved' and allow input again
     public void onControllerMovementComplete()
     {
         playersMoved++;
@@ -56,8 +57,9 @@ public class playerManager : MonoBehaviour
         }
     }
 
+    //checking to see if the elevator platform is up or down
     public void onElevatorToggle(int upX, int upY, int downX, int downY, bool isUp)
-    {
+    { 
         if (isUp)
         {
             for (int i = 0; i < playerControllers.Length; i++)
@@ -82,6 +84,7 @@ public class playerManager : MonoBehaviour
         }
     }
 
+    //when called allows the user to start playing
     public void Reset()
     {
         allowInput = true;

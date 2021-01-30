@@ -16,8 +16,19 @@ public class levelManager : MonoBehaviour
     //how many homes reachable
     public int homeCountMax;
     //how many homes have been reached
-    int homeCountCurrent;    
+    int homeCountCurrent;
 
+    //everything starts to allow the player to play again
+    private void Awake()
+    {
+        levelCompleteDisplay.SetActive(false);
+        resetButton.onClick.AddListener(onClickReset);
+        generateMap();
+        homeCountCurrent = 0;
+
+    }
+
+    //everything resets to allow the player to play again
     private void onClickReset()
     {
         homeCountCurrent = 0;
@@ -28,6 +39,8 @@ public class levelManager : MonoBehaviour
         elevatorMovement.Reset();
         generateMap();
     }
+
+    //check to see if a character is hitting a wall if so deny move
     public bool movementCheck(int currentX, int currentY, int direction)
     {
         
@@ -44,6 +57,7 @@ public class levelManager : MonoBehaviour
         return true;
     }
 
+    //checking if the character is at it's home
     public bool homeCheck(int currentX, int currentY, char homeID)
     {
         char tempChar = map[currentX, currentY];
@@ -58,6 +72,7 @@ public class levelManager : MonoBehaviour
         return false;
     }
 
+    //check to see if a character has landed on the ground
     public bool groundCheck(int currentX, int currentY)
     {
         char tempChar = map[currentX + 1, currentY];
@@ -73,6 +88,8 @@ public class levelManager : MonoBehaviour
         }
         return true;
     }
+
+    //display level complete to the user if, condition equals true
     private void levelCompleteCheck()
     {
         if (homeCountMax == homeCountCurrent)
@@ -80,15 +97,9 @@ public class levelManager : MonoBehaviour
             levelCompleteDisplay.SetActive(true);
         }
     }
-    private void Awake()
-    {
-        levelCompleteDisplay.SetActive(false);
-        resetButton.onClick.AddListener(onClickReset);
-        generateMap();
-        homeCountCurrent = 0;
-
-    }
     
+    
+    //updating the map, so it knows where the elevator platform is
     public void onElevatorToggle(int x, int y, bool isUp)
     {
         if (isUp)
@@ -101,6 +112,7 @@ public class levelManager : MonoBehaviour
         }
     }
 
+    //generating the default map whe called upon
     public void generateMap()
     {
         map = new char[,]
